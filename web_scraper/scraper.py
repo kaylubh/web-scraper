@@ -14,7 +14,7 @@ def parse_article_markup(raw_article_document):
 
     return article_document
 
-def extract_citations_needed(article_document):
+def extract_citations_needed_paragraphs(article_document):
     """
     
     """
@@ -30,9 +30,8 @@ def extract_citations_needed(article_document):
         for link in paragraph.select("a"):
 
             if link.get("href") == "/wiki/Wikipedia:Citation_needed":
-                
-                paragraphs_citations_needed.append(paragraph.get_text())
 
+                paragraphs_citations_needed.append(paragraph.get_text())
 
     return paragraphs_citations_needed
 
@@ -43,18 +42,24 @@ def get_citations_needed_count(wikipedia_article_url):
 
     raw_article_document = requests.get(wikipedia_article_url)
     parsed_article_document = parse_article_markup(raw_article_document.text)
-    test = extract_citations_needed(parsed_article_document)
+    paragraphs_citations_needed = extract_citations_needed_paragraphs(parsed_article_document)
 
-    return test
+    return len(paragraphs_citations_needed)
 
 def get_citations_needed_report(wikipedia_article_url):
     """
     
     """
 
+    raw_article_document = requests.get(wikipedia_article_url)
+    parsed_article_document = parse_article_markup(raw_article_document.text)
+    paragraphs_citations_needed = extract_citations_needed_paragraphs(parsed_article_document)
 
+    citations_needed_report = []
+    for paragraph in paragraphs_citations_needed:
+        citations_needed_report.append(f"***Citation Needed***\n{paragraph}\n")
 
-
+    return citations_needed_report
 
 
 ###############
@@ -63,4 +68,5 @@ def get_citations_needed_report(wikipedia_article_url):
     
 article = "https://en.wikipedia.org/wiki/Potato"
 
-print(get_citations_needed_count(article))
+# print(get_citations_needed_count(article))
+# get_citations_needed_report(article)
